@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	defaultDomain = "api.openai.com"
+	defaultDomain = "https://api.openai.com"
 )
 
 type client struct {
@@ -33,12 +33,11 @@ func NewClientDefaultDomain(apiKey string) *client {
 }
 
 func (c client) get(endpoint string) ([]byte, error) {
-	url := fmt.Sprintf("%s%s", defaultDomain, endpoint)
+	url := fmt.Sprintf("%s%s", c.domain, endpoint)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("content-type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
 
 	res, resErr := c.client.Do(req)
