@@ -50,3 +50,22 @@ func (c client) get(endpoint string) ([]byte, error) {
 
 	return body, bodyErr
 }
+
+func (c client) post(endpoint string, payload string) ([]byte, error) {
+	url := fmt.Sprintf("%s%s", c.domain, endpoint)
+	req, err := http.NewRequest(http.MethodPost, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
+
+	res, resErr := c.client.Do(req)
+	if resErr != nil {
+		return nil, resErr
+	}
+
+	defer res.Body.Close()
+	body, bodyErr := ioutil.ReadAll(res.Body)
+
+	return body, bodyErr
+}
