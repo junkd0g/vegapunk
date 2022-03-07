@@ -38,17 +38,17 @@ func (c client) get(endpoint string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
+	req.Header.Add(`Authorization`, fmt.Sprintf("Bearer %s", c.apiKey))
 
-	res, resErr := c.client.Do(req)
-	if resErr != nil {
-		return nil, resErr
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
 	}
 
 	defer res.Body.Close()
-	body, bodyErr := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
 
-	return body, bodyErr
+	return body, err
 }
 
 func (c client) post(endpoint string, payload string) ([]byte, error) {
@@ -57,15 +57,15 @@ func (c client) post(endpoint string, payload string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
-
-	res, resErr := c.client.Do(req)
-	if resErr != nil {
-		return nil, resErr
+	req.Header.Add(`Authorization`, fmt.Sprintf("Bearer %s", c.apiKey))
+	req.Header.Add(`Content-Type`, `application/json`)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return nil, err
 	}
 
 	defer res.Body.Close()
-	body, bodyErr := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
 
-	return body, bodyErr
+	return body, err
 }
