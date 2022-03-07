@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 const (
@@ -54,12 +55,13 @@ func (c client) get(endpoint string) ([]byte, error) {
 
 func (c client) post(endpoint string, payload string) ([]byte, error) {
 	url := fmt.Sprintf("%s%s", c.domain, endpoint)
-	req, err := http.NewRequest(http.MethodPost, url, nil)
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add(`Authorization`, fmt.Sprintf("Bearer %s", c.apiKey))
-	req.Header.Add(`Content-Type`, `application/json`)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.apiKey))
+	req.Header.Add("Content-Type", "application/json")
+
 	res, err := c.client.Do(req)
 	if err != nil {
 		return nil, err

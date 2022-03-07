@@ -22,18 +22,20 @@ type CompletionsRequest struct {
 	Stream           bool    `json:"stream"`
 }
 
-func (c client) CreateCompletions(engineID string, cr CompletionsRequest) (interface{}, error) {
+func (c client) CreateCompletions(engineID string, cr CompletionsRequest) (string, error) {
 	endpoint := fmt.Sprintf(completionsEndpoint, engineID)
 	request, err := json.Marshal(cr)
-
+	if err != nil {
+		return "", err
+	}
 	body, err := c.post(endpoint, string(request))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	var resp interface{}
-	if err = json.Unmarshal(body, &resp); err != nil {
-		return nil, err
-	}
-	return resp, nil
+	//var resp interface{}
+	//if err = json.Unmarshal(body, &resp); err != nil {
+	//	return nil, err
+	//}
+	return string(body), nil
 }
