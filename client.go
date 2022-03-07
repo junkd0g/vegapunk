@@ -39,6 +39,7 @@ func (c client) get(endpoint string) ([]byte, error) {
 		return nil, err
 	}
 	req.Header.Add(`Authorization`, fmt.Sprintf("Bearer %s", c.apiKey))
+	req.Header.Add(`Content-Type`, `application/json`)
 
 	res, err := c.client.Do(req)
 	if err != nil {
