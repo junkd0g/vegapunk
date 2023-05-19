@@ -28,14 +28,29 @@ func (c client) CreateCompletions(engineID string, cr CompletionsRequest) (strin
 	if err != nil {
 		return "", err
 	}
-	body, err := c.post(endpoint, string(request))
-	if err != nil {
-		return "", err
+
+	var completionText string
+
+	for {
+		body, err := c.post(endpoint, string(request))
+		if err != nil {
+			return "", err
+		}
+
+		var response CompletionsResponse
+		if err = json.Unmarshal(body, &response); err != nil {
+			return "", err
+		}
+
+		choice := response.Choices[0]
+		completionText += choice.Text
+
+		if choice.FinishReason == "stop" || len(completionText) >= cr.MaxTokens {
+			break
+		}
+
+		cr.Prompt = completionText
 	}
 
-	//var resp interface{}
-	//if err = json.Unmarshal(body, &resp); err != nil {
-	//	return nil, err
-	//}
-	return string(body), nil
+	return completionText, nil
 }
