@@ -24,33 +24,15 @@ type CompletionsRequest struct {
 
 func (c client) CreateCompletions(engineID string, cr CompletionsRequest) (string, error) {
 	endpoint := fmt.Sprintf(completionsEndpoint, engineID)
+	fmt.Println(cr)
 	request, err := json.Marshal(cr)
 	if err != nil {
 		return "", err
 	}
-
-	var completionText string
-
-	for {
-		body, err := c.post(endpoint, string(request))
-		if err != nil {
-			return "", err
-		}
-
-		var response CompletionsResponse
-		if err = json.Unmarshal(body, &response); err != nil {
-			return "", err
-		}
-
-		choice := response.Choices[0]
-		completionText += choice.Text
-
-		if choice.FinishReason == "stop" || len(completionText) >= cr.MaxTokens {
-			break
-		}
-
-		cr.Prompt = completionText
+	body, err := c.post(endpoint, string(request))
+	if err != nil {
+		return "", err
 	}
 
-	return completionText, nil
+	return string(body), nil
 }
